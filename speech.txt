@@ -1,0 +1,47 @@
+Firstly I recommend updating your Raspbian distribution if you have not recently already done so. Speech did not work for me until I did this. This may take 30 - 60 minutes depending on your connection speed etc. To do this:
+
+sudo apt-get update
+sudo apt-get upgrade
+If you do not already have sound on your RPi then you will need the alsa sound utilities:
+
+ sudo apt-get install alsa-utils
+and edit the file /etc/modules using:
+
+ sudo nano /etc/modules
+to have line:
+
+ snd_bcm2835 
+If this line is already there then leave the file as is!
+
+Install the mplayer audio/movie player with:
+
+sudo apt-get install mplayer
+To sort out the mplayer error message, edit file /etc/mplayer/mplayer.conf using:
+
+ sudo nano /etc/mplayer/mplayer.conf
+to add line
+
+nolirc=yes
+
+Google Text to Speech
+Google’s Text to Speech engine is a little different to Festival and Espeak. Your text is sent to Google’s servers to generate the speech file which is then returned to your Pi and played using mplayer. This means you will need an internet connection for it to work, but the speech quality is superb.
+
+I used used ax206geek’s bash script to access the Google Text to Speech engine:
+
+Create a file speech.sh with:
+
+ nano speech.sh
+Add these lines to the file and save it (in nano editor use CTRL-O writeOut)
+
+#!/bin/bash
+say() { local IFS=+;/usr/bin/mplayer -ao alsa -really-quiet -noconsolecontrols "http://translate.google.com/translate_tts?tl=en&q=$*"; }
+say $*
+Alternatively save from here: File:Speech.sh
+
+Add execute permissions to your script with:
+
+chmod u+x speech.sh
+Test it using:
+
+./speech.sh Look Dave, I can see you're really upset about this.
+EXTRA: Dan Fountain improved on the above script to speak any length of text (Google limits you to 100 bytes normally). His excellent easy-to-read webpage describes this at http://danfountain.com/2013/03/raspberry-pi-text-to-speech/
