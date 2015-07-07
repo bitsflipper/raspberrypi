@@ -1,0 +1,71 @@
+Install TightVncServer
+
+  sudo apt-get update
+
+  sudo apt-get install tightvncserver
+
+  tightvncserver
+
+The first time this is run you must enter a password and verify it. No need to enter a view only password.
+To configure for auto start as a service when the Pi boots up:
+Open nano (text editor) to create a file to auto start TightVNC Server
+  
+  sudo nano /etc/init.d/startvncserver
+
+Type in the following (or copy and paste):
+
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          tightvncserver
+# Required-Start:    $local_fs
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start/stop tightvncserver
+### END INIT INFO
+
+# More details see:
+# http://www.penguintutor.com/linux/tightvnc
+
+### Customize this entry
+# Set the USER variable to the name of the user to start tightvncserver under
+export USER='pi'
+### End customization required
+
+eval cd ~$USER
+
+case "$1" in
+  start)
+    su $USER -c '/usr/bin/tightvncserver :2'
+    #su $USER -c '/usr/bin/tightvncserver - localhost:1'
+    echo "Starting TightVNC server for $USER "
+    ;;
+  stop)
+    pkill Xtightvnc
+    echo "Tightvncserver stopped"
+    ;;
+  *)
+    echo "Usage: /etc/init.d/tightvncserver {start|stop}"
+    exit 1
+    ;;
+esac
+exit 0
+
+Press Ctrl+x, then y to save and Enter to keep the same file name.
+Edit the permissions of this file to make it executable and active:
+
+  sudo chmod 755 /etc/init.d/startvncserver
+  
+  sudo update-rc.d tightvncserver defaults
+
+Reboot
+
+  sudo reboot
+  
+Start The VNC Client
+
+Connect using your IP address, DDNS, or domain name
+
+  tatskie-pueblo.homeip.net:5902 or 192.168.1.2:5902
+  
+Display number 2 (/usr/bin/tightvncserver :2) is port 5902; display 1 is port 5901, and display 0 is port 5900.
